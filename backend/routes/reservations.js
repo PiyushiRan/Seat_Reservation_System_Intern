@@ -8,35 +8,40 @@ router.get("/my", auth, async (req, res) => {
   const reservations = await Reservation.find({ intern: req.user.id }).populate("seat");
   res.json(reservations);
 });
-
 router.post("/book", auth, async (req, res) => {
   const { seatId, date, timeSlot } = req.body;
 
-  // Check if this intern already has a reservation for the exact same date and timeSlot
-  // (so they can't double-book the same time slot)
+  // Check for duplicate booking by same intern
   const existing = await Reservation.findOne({ intern: req.user.id, date, timeSlot });
   if (existing) {
     return res.status(400).send("You already have a reservation at this date and time");
   }
 
-  // Check if seat is already reserved by any intern for the date/time
+  // Check if seat is already reserved
   const seatReserved = await Reservation.findOne({ seat: seatId, date, timeSlot });
   if (seatReserved) {
     return res.status(400).send("Seat already reserved for this date and time");
   }
 
-  // Check if date/time is valid (not past)
+  // Parse reservation datetime
+  const reservationTime = new Date(`${date}T${timeSlot.padStart(2, "0")}:00:00`);
   const now = new Date();
-  if (
-    new Date(date) < now ||
-    (new Date(date).toDateString() === now.toDateString() && parseInt(timeSlot) <= now.getHours())
-  ) {
-    return res.status(400).send("Invalid reservation time");
+
+  // Ensure reservation is at least 1 hour in advance
+  const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+  if (reservationTime <= oneHourLater) {
+    return res.status(400).send("Seats must be reserved at least 1 hour in advance");
   }
 
-  // Create reservation
-  const reservation = new Reservation({ intern: req.user.id, seat: seatId, date, timeSlot });
+  // Save reservation
+  const reservation = new Reservation({
+    intern: req.user.id,
+    seat: seatId,
+    date,
+    timeSlot,
+  });
   await reservation.save();
+
   res.json({ msg: "Seat reserved" });
 });
 
