@@ -10,6 +10,11 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
+  // Check if email ends with @slt.com
+  if (!email || !email.endsWith("@slt.com")) {
+    return res.status(400).json({ msg: "Only @slt.com email addresses are allowed" });
+  }
+
   const existingUser = await User.findOne({ email });
   if (existingUser) return res.status(400).json({ msg: "User already exists" });
 
@@ -23,6 +28,11 @@ router.post("/register", async (req, res) => {
 // Login (Admin or Intern)
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+
+  // Check if email ends with @slt.com (case-insensitive)
+  if (!email || !email.toLowerCase().endsWith("@slt.com")) {
+    return res.status(400).json({ msg: "Only @slt.com email addresses are allowed" });
+  }
 
   const user = await User.findOne({ email });
   if (!user || !(await bcrypt.compare(password, user.password))) {
