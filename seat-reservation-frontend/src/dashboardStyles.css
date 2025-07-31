@@ -1,0 +1,64 @@
+/* General Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+  padding: 24px;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Cards */
+.MuiPaper-root {
+  border-radius: 12px !important;
+  transition: box-shadow 0.3s ease;
+}
+
+.MuiPaper-root:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Buttons */
+.MuiButton-contained {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Forms */
+.MuiTextField-root, .MuiFormControl-root {
+  margin-bottom: 16px !important;
+}
+
+/* Tables */
+.MuiTableCell-head {
+  font-weight: 600 !important;
+  background-color: #f5f7fa !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animated-card {
+  animation: fadeIn 0.4s ease-out forwards;
+}
